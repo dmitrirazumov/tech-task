@@ -6,6 +6,7 @@ import lombok.SneakyThrows;
 import org.oddishwolf.api.entity.Gender;
 import org.oddishwolf.api.entity.User;
 import org.oddishwolf.api.util.ConnectionManager;
+import org.oddishwolf.api.util.ScriptsReader;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -22,6 +23,45 @@ public class UserDao implements Dao<String, User> {
     private static final String FIND_ALL_SQL = "SELECT username, first_name, last_name, birthday, email, g.gender_name " +
             "FROM users JOIN gender g ON users.gender = g.id";
     private static final String FIND_BY_ID_SQL = FIND_ALL_SQL + " WHERE username = ?";
+
+    @SneakyThrows
+    public boolean createTablesAndInsertData() {
+        String createSql = ScriptsReader.readScript("create_tables_script.sql");
+        String insertSql = ScriptsReader.readScript("insert_data_script.sql");
+
+        Connection connection = null;
+        Statement createStatement = null;
+        Statement insertStatement = null;
+
+        try {
+            connection = ConnectionManager.open();
+            createStatement = connection.createStatement();
+            insertStatement = connection.createStatement();
+
+            connection.setAutoCommit(false);
+
+            createStatement.execute(createSql);
+            insertStatement.executeUpdate(insertSql);
+
+            connection.commit();
+            return true;
+        } catch (Exception exc) {
+            if (connection != null) {
+                connection.rollback();
+            }
+            throw exc;
+        } finally {
+            if (connection != null) {
+                connection.close();
+            }
+            if (createStatement != null) {
+                createStatement.close();
+            }
+            if (insertStatement != null) {
+                insertStatement.close();
+            }
+        }
+    }
 
     @Override
     public boolean save(User entity) {
@@ -82,6 +122,29 @@ public class UserDao implements Dao<String, User> {
     @Override
     public boolean delete(String id) {
         return false;
+    }
+
+    public boolean createTables() {
+        String sql = ScriptsReader.readScript("create_tables_script.sql");
+        try (Connection connection = ConnectionManager.open();
+             Statement statement = connection.createStatement()) {
+
+            statement.execute(sql);
+            return true;
+        } catch (SQLException exc) {
+            return false;
+        }
+    }
+
+    public int insertInitData() {
+        String sql = ScriptsReader.readScript("insert_data_script.sql");
+        try (Connection connection = ConnectionManager.open();
+             Statement statement = connection.createStatement()) {
+
+            return statement.executeUpdate(sql);
+        } catch (SQLException exc) {
+            return 0;
+        }
     }
 
     private User buildUser(ResultSet dbUsers) throws SQLException {

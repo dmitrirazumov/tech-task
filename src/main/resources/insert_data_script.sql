@@ -1,22 +1,3 @@
-CREATE TABLE users
-(
-    username   VARCHAR(128) PRIMARY KEY,
-    first_name VARCHAR(128)                       NOT NULL,
-    last_name  VARCHAR(128)                       NOT NULL,
-    birthday   DATE                               NOT NULL,
-    email      VARCHAR(128)                       NOT NULL UNIQUE,
-    gender     INT REFERENCES gender (id) NOT NULL
-);
-
-CREATE TABLE gender
-(
-    id     SERIAL PRIMARY KEY,
-    gender_name VARCHAR(16)
-);
-
-DROP TABLE users;
-DROP TABLE gender;
-
 INSERT INTO gender (gender_name)
 VALUES ('MALE'),
        ('FEMALE');
@@ -32,7 +13,3 @@ VALUES ('username1', 'first_name1', 'Васильков', '01-01-2022', 'email1@
        ('username8', 'first_name8', 'dummy', '08-01-2022', 'email8@java.com', 2),
        ('username9', 'first_name9', 'dummy', '09-01-2022', 'email9@java.com', 1),
        ('username10', 'first_name10', 'Датаджайлов', '10-01-2022', 'email10@java.com', 2);
-
--- query for get gender_name instead of gender_id
-SELECT username, first_name, last_name, birthday, email, g.gender_name
-FROM users JOIN gender g on users.gender = g.id;

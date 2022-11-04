@@ -26,6 +26,7 @@ public class UserService {
         return userDao.findAll();
     }
 
+    //return users which younger than 20
     public List<User> filterByAge() {
         List<User> users = userDao.findAll();
         return users.stream().
@@ -33,11 +34,27 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    //return users whose last name ends with "ов"
     public List<User> filterByLastNamePostfix() {
         List<User> users = userDao.findAll();
         return users.stream()
                 .filter(user -> user.getLastName().endsWith("ов"))
                 .collect(Collectors.toList());
+    }
+
+    //create tables for db and insert test data
+    public boolean init() {
+        return userDao.createTablesAndInsertData();
+    }
+
+    //create tables for db without test data
+    public boolean initTables() {
+        return userDao.createTables();
+    }
+
+    //insert test data if tables already created
+    public int initData() {
+        return userDao.insertInitData();
     }
 
     public long getAge(User user) {
