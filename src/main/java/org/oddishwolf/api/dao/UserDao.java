@@ -7,10 +7,7 @@ import org.oddishwolf.api.entity.Gender;
 import org.oddishwolf.api.entity.User;
 import org.oddishwolf.api.util.ConnectionManager;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,13 +17,30 @@ public class UserDao implements Dao<String, User> {
 
     private static final UserDao INSTANCE = new UserDao();
 
+    private static final String SAVE_SQL = "INSERT INTO users (username, first_name, last_name, birthday, email, gender) " +
+            "VALUES (?, ?, ?, ?, ?, ?)";
     private static final String FIND_ALL_SQL = "SELECT username, first_name, last_name, birthday, email, g.gender_name " +
-            "FROM users JOIN gender g on users.gender = g.id";
+            "FROM users JOIN gender g ON users.gender = g.id";
     private static final String FIND_BY_ID_SQL = FIND_ALL_SQL + " WHERE username = ?";
 
     @Override
-    public User save(User entity) {
-        return null;
+    public boolean save(User entity) {
+        try (Connection connection = ConnectionManager.open();
+             PreparedStatement preparedStatement = connection.prepareStatement(SAVE_SQL, Statement.RETURN_GENERATED_KEYS)) {
+            preparedStatement.setString(1, entity.getUsername());
+            preparedStatement.setString(2, entity.getFirstName());
+            preparedStatement.setString(3, entity.getLastName());
+            preparedStatement.setDate(4, Date.valueOf(entity.getBirthday()));
+            preparedStatement.setString(5, entity.getEmail());
+            preparedStatement.setInt(6, entity.getGender().ordinal() + 1);
+
+            preparedStatement.executeUpdate();
+
+            ResultSet dbNewUser = preparedStatement.getGeneratedKeys();
+            return dbNewUser.next();
+        } catch (SQLException exc) {
+            return false;
+        }
     }
 
     @Override

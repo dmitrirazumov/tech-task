@@ -5,7 +5,7 @@ import java.util.Optional;
 
 public interface Dao<K, T> {
 
-    T save(T entity);
+    boolean save(T entity);
 
     List<T> findAll();
 
