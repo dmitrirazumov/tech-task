@@ -21,6 +21,7 @@ public class UpdateUserMapper implements Mapper<UpdateUserDto, User> {
                 .birthday(LocalDateFormatter.format(object.getBirthday()))
                 .email(object.getEmail())
                 .gender(findGenderByStringId(object))
+                .additionalParameter(object.getNewUsername())
                 .build();
     }
 

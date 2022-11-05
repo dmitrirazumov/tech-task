@@ -18,4 +18,7 @@ public class User {
     LocalDate birthday;
     String email;
     Gender gender;
+
+    //contains additional options. for example: new username
+    String additionalParameter;
 }

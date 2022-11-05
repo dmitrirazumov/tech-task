@@ -7,6 +7,7 @@ import lombok.Value;
 @Builder
 public class UpdateUserDto {
     String username;
+    String newUsername;
     String firstName;
     String lastName;
     String birthday;
@@ -14,7 +15,8 @@ public class UpdateUserDto {
     String gender;
 
     public boolean isEmpty() {
-        return firstName == null
+        return newUsername == null
+                && firstName == null
                 && lastName == null
                 && birthday == null
                 && email == null

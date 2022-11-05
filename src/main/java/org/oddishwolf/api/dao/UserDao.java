@@ -127,7 +127,7 @@ public class UserDao implements Dao<String, User> {
 
         //build query
         setSql.add("username = ?");
-        parameters.add(entity.getUsername());
+        parameters.add(entity.getAdditionalParameter());
         if (entity.getFirstName() != null) {
             setSql.add("first_name = ?");
             parameters.add(entity.getFirstName());

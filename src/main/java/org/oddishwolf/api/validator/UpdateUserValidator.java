@@ -2,8 +2,8 @@ package org.oddishwolf.api.validator;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.oddishwolf.api.dao.UserDao;
 import org.oddishwolf.api.dto.UpdateUserDto;
+import org.oddishwolf.api.service.UserService;
 import org.oddishwolf.api.util.LocalDateFormatter;
 
 import java.util.Set;
@@ -13,7 +13,7 @@ public class UpdateUserValidator implements Validator<UpdateUserDto> {
 
     private static final UpdateUserValidator INSTANCE = new UpdateUserValidator();
 
-    private final UserDao userDao = UserDao.getInstance();
+    private final UserService userService = UserService.getInstance();
 
     private static final Set<String> GENDERS_CODE = Set.of("1", "2");
 
@@ -26,13 +26,17 @@ public class UpdateUserValidator implements Validator<UpdateUserDto> {
             return validationResult;
         }
 
-        if (userDao.findById(object.getUsername()).isEmpty()) {
+        if (userService.get(object.getUsername()).isEmpty()) {
             validationResult.add(Error.of("incorrect.username", "User doesn't exist"));
             return validationResult;
         }
 
         if (object.isEmpty()) {
             validationResult.add(Error.of("blank.fields", "You must fill in at least one field"));
+        }
+
+        if (object.getNewUsername() != null && userService.get(object.getNewUsername()).isPresent()) {
+            validationResult.add(Error.of("already.exist", "This username already exist. Try to type another"));
         }
 
         if (object.getBirthday() != null && !LocalDateFormatter.isValid(object.getBirthday())) {
