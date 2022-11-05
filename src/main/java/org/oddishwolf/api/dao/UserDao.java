@@ -12,6 +12,9 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.*;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserDao implements Dao<String, User> {
@@ -23,6 +26,7 @@ public class UserDao implements Dao<String, User> {
     private static final String FIND_ALL_SQL = "SELECT username, first_name, last_name, birthday, email, g.gender_name " +
             "FROM users JOIN gender g ON users.gender = g.id";
     private static final String FIND_BY_ID_SQL = FIND_ALL_SQL + " WHERE username = ?";
+    private static final String FIRST_PART_UPDATE_SQL = "UPDATE users";
 
     @SneakyThrows
     public boolean createTablesAndInsertData() {
@@ -84,7 +88,6 @@ public class UserDao implements Dao<String, User> {
     }
 
     @Override
-    @SneakyThrows
     public List<User> findAll() {
         try (Connection connection = ConnectionManager.open();
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_SQL)) {
@@ -95,11 +98,12 @@ public class UserDao implements Dao<String, User> {
                 users.add(buildUser(dbUsers));
             }
             return users;
+        } catch (SQLException exc) {
+            throw new RuntimeException(exc);
         }
     }
 
     @Override
-    @SneakyThrows
     public Optional<User> findById(String key) {
         try (Connection connection = ConnectionManager.open();
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_SQL)) {
@@ -111,12 +115,55 @@ public class UserDao implements Dao<String, User> {
                 user = buildUser(dbUser);
             }
             return Optional.ofNullable(user);
+        } catch (SQLException exc) {
+            throw new RuntimeException(exc);
         }
     }
 
     @Override
-    public void update(User entity) {
+    public boolean update(User entity) {
+        List<Object> parameters = new ArrayList<>();
+        List<String> setSql = new ArrayList<>();
 
+        //build query
+        setSql.add("username = ?");
+        parameters.add(entity.getUsername());
+        if (entity.getFirstName() != null) {
+            setSql.add("first_name = ?");
+            parameters.add(entity.getFirstName());
+        }
+        if (entity.getLastName() != null) {
+            setSql.add("last_name = ?");
+            parameters.add(entity.getLastName());
+        }
+        if (entity.getBirthday() != null) {
+            setSql.add("birthday = ?");
+            parameters.add(entity.getBirthday());
+        }
+        if (entity.getEmail() != null) {
+            setSql.add("email = ?");
+            parameters.add(entity.getEmail());
+        }
+        if (entity.getGender() != null) {
+            setSql.add("gender = ?");
+            parameters.add(entity.getGender().ordinal() + 1);
+        }
+        parameters.add(entity.getUsername());
+
+        String set = setSql.stream()
+                .collect(joining(", ", " SET ", " WHERE username = ? "));
+        String sql = FIRST_PART_UPDATE_SQL + set;
+
+        try (Connection connection = ConnectionManager.open();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            for (int i = 0; i < parameters.size(); i++) {
+                preparedStatement.setObject(i + 1, parameters.get(i));
+            }
+            preparedStatement.executeUpdate();
+            return true;
+        } catch (SQLException exc) {
+            throw new RuntimeException(exc);
+        }
     }
 
     @Override

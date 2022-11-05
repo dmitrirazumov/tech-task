@@ -11,7 +11,7 @@ public interface Dao<K, T> {
 
     Optional<T> findById(K key);
 
-    void update(T entity);
+    boolean update(T entity);
 
     boolean delete(K id);
 }

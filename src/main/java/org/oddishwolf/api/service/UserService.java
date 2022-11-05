@@ -3,13 +3,19 @@ package org.oddishwolf.api.service;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.oddishwolf.api.dao.UserDao;
+import org.oddishwolf.api.dto.UpdateUserDto;
 import org.oddishwolf.api.entity.User;
+import org.oddishwolf.api.exception.ValidationException;
+import org.oddishwolf.api.mapper.UpdateUserMapper;
+import org.oddishwolf.api.validator.UpdateUserValidator;
+import org.oddishwolf.api.validator.ValidationResult;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.*;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserService {
@@ -17,6 +23,7 @@ public class UserService {
     private static final UserService INSTANCE = new UserService();
 
     private final UserDao userDao = UserDao.getInstance();
+    private final UpdateUserMapper updateUserMapper = UpdateUserMapper.getInstance();
 
     public Optional<User> get(String username) {
         return userDao.findById(username);
@@ -31,7 +38,7 @@ public class UserService {
         List<User> users = userDao.findAll();
         return users.stream().
                 filter(user -> getAge(user) < 20)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     //return users whose last name ends with "ов"
@@ -39,7 +46,22 @@ public class UserService {
         List<User> users = userDao.findAll();
         return users.stream()
                 .filter(user -> user.getLastName().endsWith("ов"))
-                .collect(Collectors.toList());
+                .collect(toList());
+    }
+
+    //updating any field of user
+    public boolean update(UpdateUserDto userDto) {
+        //validation
+        ValidationResult validationResult = UpdateUserValidator.getInstance().isValid(userDto);
+        if (!validationResult.isValid()) {
+            throw new ValidationException(validationResult.getExceptions());
+        }
+        //mapping
+        User userEntity = updateUserMapper.mapFrom(userDto);
+        //update
+        userDao.update(userEntity);
+
+        return true;
     }
 
     //create tables for db and insert test data

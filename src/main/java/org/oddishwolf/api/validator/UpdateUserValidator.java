@@ -1,0 +1,52 @@
+package org.oddishwolf.api.validator;
+
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.oddishwolf.api.dao.UserDao;
+import org.oddishwolf.api.dto.UpdateUserDto;
+import org.oddishwolf.api.util.LocalDateFormatter;
+
+import java.util.Set;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class UpdateUserValidator implements Validator<UpdateUserDto> {
+
+    private static final UpdateUserValidator INSTANCE = new UpdateUserValidator();
+
+    private final UserDao userDao = UserDao.getInstance();
+
+    private static final Set<String> GENDERS_CODE = Set.of("1", "2");
+
+    @Override
+    public ValidationResult isValid(UpdateUserDto object) {
+        ValidationResult validationResult = new ValidationResult();
+
+        if (object.getUsername() == null || object.getUsername().isBlank()) {
+            validationResult.add(Error.of("blank.username", "You should type username"));
+            return validationResult;
+        }
+
+        if (userDao.findById(object.getUsername()).isEmpty()) {
+            validationResult.add(Error.of("incorrect.username", "User doesn't exist"));
+            return validationResult;
+        }
+
+        if (object.isEmpty()) {
+            validationResult.add(Error.of("blank.fields", "You must fill in at least one field"));
+        }
+
+        if (object.getBirthday() != null && !LocalDateFormatter.isValid(object.getBirthday())) {
+            validationResult.add(Error.of("incorrect.date", "Type date in format dd-MM-yyyy"));
+        }
+
+        if (object.getGender() != null && GENDERS_CODE.stream().noneMatch(code -> object.getGender().equals(code))) {
+            validationResult.add(Error.of("incorrect.gender.code", "You should type number: MALE - 1, FEMALE - 2"));
+        }
+
+        return validationResult;
+    }
+
+    public static UpdateUserValidator getInstance() {
+        return INSTANCE;
+    }
+}

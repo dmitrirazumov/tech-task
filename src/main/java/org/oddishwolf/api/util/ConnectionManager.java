@@ -6,6 +6,10 @@ import lombok.experimental.UtilityClass;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
+/**
+One thread connection.
+Class can be refactored to use connection pool.
+*/
 @UtilityClass
 public class ConnectionManager {
 
@@ -18,7 +22,6 @@ public class ConnectionManager {
     }
 
     @SneakyThrows
-    //one thread connection
     public static Connection open() {
         return DriverManager.getConnection(
                 PropertiesUtil.get(URL_KEY),
