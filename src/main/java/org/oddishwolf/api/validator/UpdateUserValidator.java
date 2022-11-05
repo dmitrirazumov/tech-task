@@ -1,7 +1,5 @@
 package org.oddishwolf.api.validator;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import org.oddishwolf.api.dao.UserDao;
 import org.oddishwolf.api.dto.UpdateUserDto;
 import org.oddishwolf.api.service.UserService;
@@ -9,10 +7,7 @@ import org.oddishwolf.api.util.LocalDateFormatter;
 
 import java.util.Set;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UpdateUserValidator implements Validator<UpdateUserDto> {
-
-    private static final UpdateUserValidator INSTANCE = new UpdateUserValidator();
 
     private final UserService userService = new UserService(new UserDao());
 
@@ -49,9 +44,5 @@ public class UpdateUserValidator implements Validator<UpdateUserDto> {
         }
 
         return validationResult;
-    }
-
-    public static UpdateUserValidator getInstance() {
-        return INSTANCE;
     }
 }

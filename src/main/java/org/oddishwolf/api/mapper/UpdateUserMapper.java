@@ -1,16 +1,11 @@
 package org.oddishwolf.api.mapper;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import org.oddishwolf.api.dto.UpdateUserDto;
 import org.oddishwolf.api.entity.Gender;
 import org.oddishwolf.api.entity.User;
 import org.oddishwolf.api.util.LocalDateFormatter;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UpdateUserMapper implements Mapper<UpdateUserDto, User> {
-
-    private static final UpdateUserMapper INSTANCE = new UpdateUserMapper();
 
     @Override
     public User mapFrom(UpdateUserDto object) {
@@ -32,9 +27,5 @@ public class UpdateUserMapper implements Mapper<UpdateUserDto, User> {
         if (object.getGender() != null && object.getGender().equals("2"))
             gender = Gender.FEMALE;
         return gender;
-    }
-
-    public static UpdateUserMapper getInstance() {
-        return INSTANCE;
     }
 }

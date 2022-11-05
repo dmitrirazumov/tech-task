@@ -18,10 +18,19 @@ import static java.util.stream.Collectors.*;
 public class UserService {
 
     private final UserDao userDao;
-    private final UpdateUserMapper updateUserMapper = UpdateUserMapper.getInstance();
+    private UpdateUserValidator updateUserValidator;
+    private ValidationResult validationResult;
+    private UpdateUserMapper updateUserMapper;
 
     public UserService(UserDao userDao) {
         this.userDao = userDao;
+    }
+
+    public UserService(UserDao userDao, UpdateUserValidator updateUserValidator, ValidationResult validationResult, UpdateUserMapper updateUserMapper) {
+        this.userDao = userDao;
+        this.updateUserValidator = updateUserValidator;
+        this.validationResult = validationResult;
+        this.updateUserMapper = updateUserMapper;
     }
 
     public Optional<User> get(String username) {
@@ -51,7 +60,7 @@ public class UserService {
     //updating any field of user
     public boolean update(UpdateUserDto userDto) {
         //validation
-        ValidationResult validationResult = UpdateUserValidator.getInstance().isValid(userDto);
+        validationResult = updateUserValidator.isValid(userDto);
         if (!validationResult.isValid()) {
             throw new ValidationException(validationResult.getExceptions());
         }
