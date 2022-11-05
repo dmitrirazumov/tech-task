@@ -1,7 +1,5 @@
 package org.oddishwolf.api.service;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import org.oddishwolf.api.dao.UserDao;
 import org.oddishwolf.api.dto.UpdateUserDto;
 import org.oddishwolf.api.entity.User;
@@ -17,13 +15,14 @@ import java.util.Optional;
 
 import static java.util.stream.Collectors.*;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserService {
 
-    private static final UserService INSTANCE = new UserService();
-
-    private final UserDao userDao = UserDao.getInstance();
+    private final UserDao userDao;
     private final UpdateUserMapper updateUserMapper = UpdateUserMapper.getInstance();
+
+    public UserService(UserDao userDao) {
+        this.userDao = userDao;
+    }
 
     public Optional<User> get(String username) {
         return userDao.findById(username);
@@ -81,9 +80,5 @@ public class UserService {
 
     public long getAge(User user) {
         return ChronoUnit.YEARS.between(user.getBirthday(), LocalDate.now());
-    }
-
-    public static UserService getInstance() {
-        return INSTANCE;
     }
 }

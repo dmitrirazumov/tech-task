@@ -5,29 +5,33 @@ import org.oddishwolf.api.dto.UpdateUserDto;
 import org.oddishwolf.api.entity.User;
 import org.oddishwolf.api.service.UserService;
 
+import java.util.List;
 import java.util.Optional;
 
 public class App {
     public static void main(String[] args) {
 
-        Optional<User> username1 = UserDao.getInstance().findById("username1");
-        if (username1.isPresent())
-            System.out.println(username1);
+        UserService userService = new UserService(new UserDao());
+        Optional<User> username1 = userService.get("username1");
+        System.out.println(username1);
 
-        boolean update = UserService.getInstance().update(UpdateUserDto.builder()
-                .username("username3")
-                .newUsername("oddishwolf2")
-                .firstName("Gile")
-//                .lastName("Data")
-                .birthday("04-12-2019")
-//                .email("test@gmail.com")
-                .gender("1")
+        List<User> all = userService.getAll();
+        System.out.println(all);
+
+        List<User> users = userService.filterByAge();
+        System.out.println(users);
+
+        List<User> users1 = userService.filterByLastNamePostfix();
+        System.out.println(users1);
+
+        userService.update(UpdateUserDto.builder()
+                .username("username1")
+                .newUsername("oddishwolf")
+                .birthday("24-11-1998")
+                .email("wanttoworkindg@gmail.com")
                 .build());
 
-        Optional<User> username2 = UserDao.getInstance().findById("oddishwolf2");
-        if (username2.isPresent())
-            System.out.println(username2);
-
-        System.out.println(update);
+        Optional<User> oddishwolf = userService.get("oddishwolf");
+        System.out.println(oddishwolf);
     }
 }

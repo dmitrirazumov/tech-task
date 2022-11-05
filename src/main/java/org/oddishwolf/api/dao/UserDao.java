@@ -1,7 +1,5 @@
 package org.oddishwolf.api.dao;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import org.oddishwolf.api.entity.Gender;
 import org.oddishwolf.api.entity.User;
@@ -12,14 +10,10 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserDao implements Dao<String, User> {
-
-    private static final UserDao INSTANCE = new UserDao();
 
     private static final String SAVE_SQL = "INSERT INTO users (username, first_name, last_name, birthday, email, gender) " +
             "VALUES (?, ?, ?, ?, ?, ?)";
@@ -203,9 +197,5 @@ public class UserDao implements Dao<String, User> {
                 .email(dbUsers.getString("email"))
                 .gender(Gender.valueOf(dbUsers.getString("gender_name")))
                 .build();
-    }
-
-    public static UserDao getInstance() {
-        return INSTANCE;
     }
 }

@@ -27,9 +27,9 @@ public class UpdateUserMapper implements Mapper<UpdateUserDto, User> {
 
     private Gender findGenderByStringId(UpdateUserDto object) {
         Gender gender = null;
-        if (object.getGender().equals("1"))
+        if (object.getGender() != null && object.getGender().equals("1"))
             gender = Gender.MALE;
-        if (object.getGender().equals("2"))
+        if (object.getGender() != null && object.getGender().equals("2"))
             gender = Gender.FEMALE;
         return gender;
     }

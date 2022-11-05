@@ -2,6 +2,7 @@ package org.oddishwolf.api.validator;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.oddishwolf.api.dao.UserDao;
 import org.oddishwolf.api.dto.UpdateUserDto;
 import org.oddishwolf.api.service.UserService;
 import org.oddishwolf.api.util.LocalDateFormatter;
@@ -13,7 +14,7 @@ public class UpdateUserValidator implements Validator<UpdateUserDto> {
 
     private static final UpdateUserValidator INSTANCE = new UpdateUserValidator();
 
-    private final UserService userService = UserService.getInstance();
+    private final UserService userService = new UserService(new UserDao());
 
     private static final Set<String> GENDERS_CODE = Set.of("1", "2");
 
