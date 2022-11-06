@@ -11,7 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.oddishwolf.api.dto.UpdateUserDto;
-import org.oddishwolf.api.entity.Gender;
 import org.oddishwolf.api.service.UserService;
 
 import java.time.LocalDate;
