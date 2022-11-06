@@ -23,7 +23,7 @@ public class UserDao implements Dao<String, User> {
     private static final String FIRST_PART_UPDATE_SQL = "UPDATE users";
 
     @SneakyThrows
-    public boolean createTablesAndInsertData() {
+    public int createTablesAndInsertData() {
         String createSql = ScriptsReader.readScript("create_tables_script.sql");
         String insertSql = ScriptsReader.readScript("insert_data_script.sql");
 
@@ -38,11 +38,11 @@ public class UserDao implements Dao<String, User> {
 
             connection.setAutoCommit(false);
 
-            createStatement.execute(createSql);
-            insertStatement.executeUpdate(insertSql);
+            createStatement.executeUpdate(createSql);
+            int insertsCount = insertStatement.executeUpdate(insertSql);
 
             connection.commit();
-            return true;
+            return insertsCount;
         } catch (Exception exc) {
             if (connection != null) {
                 connection.rollback();
@@ -170,10 +170,9 @@ public class UserDao implements Dao<String, User> {
         try (Connection connection = ConnectionManager.open();
              Statement statement = connection.createStatement()) {
 
-            statement.execute(sql);
-            return true;
+            return !statement.execute(sql);
         } catch (SQLException exc) {
-            return false;
+            throw new RuntimeException(exc);
         }
     }
 
@@ -184,7 +183,7 @@ public class UserDao implements Dao<String, User> {
 
             return statement.executeUpdate(sql);
         } catch (SQLException exc) {
-            return 0;
+            throw new RuntimeException(exc);
         }
     }
 

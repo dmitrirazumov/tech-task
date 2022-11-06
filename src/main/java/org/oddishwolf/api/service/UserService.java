@@ -73,7 +73,7 @@ public class UserService {
     }
 
     //create tables for db and insert test data
-    public boolean init() {
+    public int init() {
         return userDao.createTablesAndInsertData();
     }
 

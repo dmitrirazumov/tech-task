@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @Tag("fast")
-@Tag("user_service")
+@Tag("service_user")
 @ExtendWith({MockitoExtension.class})
 public class UserServiceTest {
 
@@ -138,16 +138,16 @@ public class UserServiceTest {
 
         @Test
         void initReturnTrue() {
-            doReturn(true).when(userDao).createTablesAndInsertData();
-            boolean init = userService.init();
-            assertThat(init).isTrue();
+            doReturn(2).when(userDao).createTablesAndInsertData();
+            int init = userService.init();
+            assertThat(init).isEqualTo(2);
         }
 
         @Test
         void initReturnFalse() {
-            doReturn(false).when(userDao).createTablesAndInsertData();
-            boolean init = userService.init();
-            assertThat(init).isFalse();
+            doReturn(0).when(userDao).createTablesAndInsertData();
+            int init = userService.init();
+            assertThat(init).isEqualTo(0);
         }
 
         @Test
