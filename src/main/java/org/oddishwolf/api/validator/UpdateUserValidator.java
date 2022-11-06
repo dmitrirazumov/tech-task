@@ -9,9 +9,14 @@ import java.util.Set;
 
 public class UpdateUserValidator implements Validator<UpdateUserDto> {
 
-    private final UserService userService = new UserService(new UserDao());
+    private final UserService userService;
+//            = new UserService(new UserDao());
 
     private static final Set<String> GENDERS_CODE = Set.of("1", "2");
+
+    public UpdateUserValidator(UserService userService) {
+        this.userService = userService;
+    }
 
     @Override
     public ValidationResult isValid(UpdateUserDto object) {

@@ -14,10 +14,10 @@ public class App {
     public static void main(String[] args) {
 
 //        new UserService(new UserDao(), new UpdateUserValidator(), new ValidationResult(), new UpdateUserMapper()).init();
-        UserService userService = new UserService(new UserDao(), new UpdateUserValidator(), new ValidationResult(), new UpdateUserMapper());
+        UserService userService = new UserService(new UserDao(), new UpdateUserValidator(new UserService(new UserDao())), new ValidationResult(), new UpdateUserMapper());
         userService.update(UpdateUserDto.builder()
-                .username("dummy")
-                .newUsername("dummy")
+                .username("username1")
+                .birthday("01-01-1998")
                 .build());
         Optional<User> username1 = userService.get("username1");
         username1.ifPresent(System.out::println);
