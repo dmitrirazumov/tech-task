@@ -11,12 +11,13 @@ import org.oddishwolf.api.validator.ValidationResult;
 import java.util.Optional;
 
 public class App {
+
     public static void main(String[] args) {
 
-//        new UserService(new UserDao(), new UpdateUserValidator(), new ValidationResult(), new UpdateUserMapper()).init();
-        UserService userService = new UserService(new UserDao(), new UpdateUserValidator(new UserService(new UserDao())), new ValidationResult(), new UpdateUserMapper());
-        userService.update(UpdateUserDto.builder().username("username1").birthday("1-13-nope").build());
-        Optional<User> username1 = userService.get("username1");
-        username1.ifPresent(System.out::println);
+        new UserService(new UserDao(), new UpdateUserValidator(new UserService(new UserDao())), new ValidationResult(), new UpdateUserMapper()).init();
+//        UserService userService = new UserService(new UserDao(), new UpdateUserValidator(new UserService(new UserDao())), new ValidationResult(), new UpdateUserMapper());
+//        userService.update(UpdateUserDto.builder().username("username1").birthday("1-13-nope").build());
+//        Optional<User> username1 = userService.get("username1");
+//        username1.ifPresent(System.out::println);
     }
 }

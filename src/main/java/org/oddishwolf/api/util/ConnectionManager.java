@@ -34,15 +34,6 @@ public class ConnectionManager {
         }
     }
 
-//    public static void main(String[] args) {
-//        try (Connection connection = ConnectionManager.open();
-//             Statement statement = connection.createStatement()) {
-//            statement.execute("DROP TABLE users; DROP TABLE gender;");
-//        } catch (SQLException throwables) {
-//            throwables.printStackTrace();
-//        }
-//    }
-
     //compatibility with older java versions
     private static void loadDriver() {
         try {

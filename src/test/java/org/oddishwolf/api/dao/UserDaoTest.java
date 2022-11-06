@@ -26,7 +26,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Before execute change properties and be sure yours test db is clean.
  * After you can comment @Disabled.
  */
-//@Disabled
+
+@Disabled
 @Tag("fast")
 @Tag("dao_user")
 @ExtendWith({MockitoExtension.class})
