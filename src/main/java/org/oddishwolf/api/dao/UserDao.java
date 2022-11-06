@@ -15,8 +15,6 @@ import static java.util.stream.Collectors.*;
 
 public class UserDao implements Dao<String, User> {
 
-    private static final String SAVE_SQL = "INSERT INTO users (username, first_name, last_name, birthday, email, gender) " +
-            "VALUES (?, ?, ?, ?, ?, ?)";
     private static final String FIND_ALL_SQL = "SELECT username, first_name, last_name, birthday, email, g.gender_name " +
             "FROM users JOIN gender g ON users.gender = g.id";
     private static final String FIND_BY_ID_SQL = FIND_ALL_SQL + " WHERE username = ?";
@@ -63,22 +61,7 @@ public class UserDao implements Dao<String, User> {
 
     @Override
     public boolean save(User entity) {
-        try (Connection connection = ConnectionManager.open();
-             PreparedStatement preparedStatement = connection.prepareStatement(SAVE_SQL, Statement.RETURN_GENERATED_KEYS)) {
-            preparedStatement.setString(1, entity.getUsername());
-            preparedStatement.setString(2, entity.getFirstName());
-            preparedStatement.setString(3, entity.getLastName());
-            preparedStatement.setDate(4, Date.valueOf(entity.getBirthday()));
-            preparedStatement.setString(5, entity.getEmail());
-            preparedStatement.setInt(6, entity.getGender().ordinal() + 1);
-
-            preparedStatement.executeUpdate();
-
-            ResultSet dbNewUser = preparedStatement.getGeneratedKeys();
-            return dbNewUser.next();
-        } catch (SQLException exc) {
-            return false;
-        }
+        return false;
     }
 
     @Override
@@ -120,8 +103,10 @@ public class UserDao implements Dao<String, User> {
         List<String> setSql = new ArrayList<>();
 
         //build query
-        setSql.add("username = ?");
-        parameters.add(entity.getAdditionalParameter());
+        if (entity.getAdditionalParameter() != null) {
+            setSql.add("username = ?");
+            parameters.add(entity.getAdditionalParameter());
+        }
         if (entity.getFirstName() != null) {
             setSql.add("first_name = ?");
             parameters.add(entity.getFirstName());
@@ -153,8 +138,8 @@ public class UserDao implements Dao<String, User> {
             for (int i = 0; i < parameters.size(); i++) {
                 preparedStatement.setObject(i + 1, parameters.get(i));
             }
-            preparedStatement.executeUpdate();
-            return true;
+
+            return preparedStatement.executeUpdate() == 1;
         } catch (SQLException exc) {
             throw new RuntimeException(exc);
         }

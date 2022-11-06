@@ -26,12 +26,18 @@
             <version>1.18.6</version>
         </dependency>
 
-        <!--rdbms-->
+        <!--main db-->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>42.3.4</version>
             <scope>runtime</scope>
+        </dependency>
+        <!--embedded db for tests-->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>2.1.214</version>
         </dependency>
 
         <!--junit 5, assertj, mockito-->

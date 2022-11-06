@@ -51,7 +51,6 @@ public class UserServiceTest {
     @Nested
     @Tag("get")
     class GetMethodsTest {
-
         @Test
         void getReturnTrue() {
             doReturn(Optional.of(FAKE_USER1)).when(userDao).findById(FAKE_USER1.getUsername());
@@ -59,14 +58,12 @@ public class UserServiceTest {
             assertThat(maybeUser).isPresent();
             maybeUser.ifPresent(user -> assertThat(user).isEqualTo(FAKE_USER1));
         }
-
         @Test
         void getReturnFalse() {
             doReturn(Optional.empty()).when(userDao).findById(FAKE_USER2.getUsername());
             Optional<User> maybeUser = userService.get(FAKE_USER2.getUsername());
             assertThat(maybeUser).isEmpty();
         }
-
         @Test
         void getAllReturnTrue() {
             doReturn(List.of(FAKE_USER1, FAKE_USER2)).when(userDao).findAll();
@@ -74,7 +71,6 @@ public class UserServiceTest {
             assertThat(maybeUsers).isNotEmpty();
             assertThat(maybeUsers).contains(FAKE_USER1, FAKE_USER2);
         }
-
         @Test
         void getAllReturnFalse() {
             doReturn(new ArrayList<User>()).when(userDao).findAll();
@@ -86,7 +82,6 @@ public class UserServiceTest {
     @Nested
     @Tag("update")
     class UpdateTest {
-
         @Test
         void updateReturnTrue() {
             User updateUser = User.builder().username("un1").email("e3@g.com").build();
@@ -97,7 +92,6 @@ public class UserServiceTest {
             boolean update = userService.update(FAKE_UPDATE_USER_DTO1);
             assertThat(update).isTrue();
         }
-
         @Test
         void updateReturnFalse() {
             ValidationResult result = new ValidationResult();
@@ -106,14 +100,12 @@ public class UserServiceTest {
 
             assertThrows(ValidationException.class,
                     () -> userService.update(FAKE_UPDATE_USER_DTO1));
-
         }
     }
 
     @Nested
     @Tag("filters")
     class FilterTest {
-
         @Test
         void filterByAge() {
             doReturn(List.of(FAKE_USER1, FAKE_USER2)).when(userDao).findAll();
@@ -122,7 +114,6 @@ public class UserServiceTest {
             assertThat(maybeUsers).contains(FAKE_USER1);
             assertThat(maybeUsers).doesNotContain(FAKE_USER2);
         }
-
         @Test
         void filterByLastNamePostfix() {
             doReturn(List.of(FAKE_USER1, FAKE_USER2)).when(userDao).findAll();
@@ -135,42 +126,36 @@ public class UserServiceTest {
 
     @Nested
     class InitData {
-
         @Test
         void initReturnTrue() {
             doReturn(2).when(userDao).createTablesAndInsertData();
             int init = userService.init();
             assertThat(init).isEqualTo(2);
         }
-
         @Test
         void initReturnFalse() {
             doReturn(0).when(userDao).createTablesAndInsertData();
             int init = userService.init();
             assertThat(init).isEqualTo(0);
         }
-
         @Test
         void initTablesReturnTrue() {
             doReturn(true).when(userDao).createTables();
             boolean init = userService.initTables();
             assertThat(init).isTrue();
         }
-
         @Test
         void initTablesReturnFalse() {
             doReturn(false).when(userDao).createTables();
             boolean init = userService.initTables();
             assertThat(init).isFalse();
         }
-
         @Test
         void initDataTrue() {
             doReturn(1).when(userDao).insertInitData();
             int init = userService.initData();
             assertThat(init).isEqualTo(1);
         }
-
         @Test
         void initDataFalse() {
             doReturn(0).when(userDao).insertInitData();

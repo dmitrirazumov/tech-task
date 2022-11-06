@@ -13,7 +13,7 @@ public class LocalDateFormatter {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern(PATTERN);
 
     public LocalDate format(String date) {
-        return LocalDate.parse(date, FORMATTER);
+        return date != null ? LocalDate.parse(date, FORMATTER) : null;
     }
 
     public boolean isValid(String date) {
