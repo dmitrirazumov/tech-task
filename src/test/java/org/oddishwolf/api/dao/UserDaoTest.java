@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Disabled because uses embedded H2.
  * Before execute change properties and be sure yours test db is clean.
  */
-//@Disabled
+@Disabled
 @Tag("fast")
 @Tag("dao_user")
 @ExtendWith({MockitoExtension.class})
@@ -62,142 +62,152 @@ public class UserDaoTest {
     @InjectMocks
     UserDao userDao;
 
-    @Test
-    @SneakyThrows
-    void createTablesAndInsertDataTrue() {
-        int countOfSuccessInserts = userDao.createTablesAndInsertData();
-        try (Connection connection = ConnectionManager.open();
-             Statement statement = connection.createStatement()) {
-            statement.execute(AFTER_DROP_TABLES_SQL);
-        }
-        assertThat(countOfSuccessInserts).isEqualTo(2);
-    }
-
-    @Test
-    @SneakyThrows
-    void createTablesTrue() {
-        boolean result = userDao.createTables();
-        try (Connection connection = ConnectionManager.open();
-             Statement statement = connection.createStatement()) {
-            statement.execute(AFTER_DROP_TABLES_SQL);
-        }
-        assertThat(result).isTrue();
-    }
-
-    @Test
-    @SneakyThrows
-    void insertInitDataTrue() {
-        userDao.createTables();
-        int countOfSuccessInserts = userDao.insertInitData();
-        try (Connection connection = ConnectionManager.open();
-             Statement statement = connection.createStatement()) {
-            statement.execute(AFTER_CLEAN_TABLES_SQL);
-            statement.execute(AFTER_DROP_TABLES_SQL);
-        }
-        assertThat(countOfSuccessInserts).isEqualTo(2);
-    }
-
-    @Test
-    @SneakyThrows
-    void findAllIsEqualToExpected() {
-        userDao.createTablesAndInsertData();
-        List<User> maybeUsers = userDao.findAll();
-        try (Connection connection = ConnectionManager.open();
-             Statement statement = connection.createStatement()) {
-            statement.execute(AFTER_CLEAN_TABLES_SQL);
-            statement.execute(AFTER_DROP_TABLES_SQL);
-        }
-        assertThat(maybeUsers).hasSize(10);
-        assertThat(maybeUsers).isEqualTo(FAKE_USERS_TO_FIND);
-    }
-
-    @Test
-    @SneakyThrows
-    void findAllIsNotEqualToExpected() {
-        userDao.createTablesAndInsertData();
-        List<User> maybeUsers = userDao.findAll();
-        try (Connection connection = ConnectionManager.open();
-             Statement statement = connection.createStatement()) {
-            statement.execute(AFTER_CLEAN_TABLES_SQL);
-            statement.execute(AFTER_DROP_TABLES_SQL);
-        }
-        assertThat(maybeUsers).hasSize(10);
-        assertThat(maybeUsers).isNotEqualTo(FAKE_USERS_TO_FIND.get(5));
-    }
-
-    @SneakyThrows
-    @ParameterizedTest
-    @MethodSource("org.oddishwolf.api.dao.UserDaoTest#getArgumentsForFindByIdTestIsEqualToExpected")
-    void findByIdIsEqualToExpected(String id, User expectedUser, int ddlDb) {
-        if (ddlDb == 1) userDao.createTablesAndInsertData();
-        Optional<User> maybeUser = userDao.findById(id);
-        assertThat(maybeUser).isPresent();
-        maybeUser.ifPresent(user -> assertThat(user).isEqualTo(expectedUser));
-        if (ddlDb == 2) {
+    @Nested
+    @Tag("dao_user_ddl")
+    class DDLOperationsTest {
+        @Test
+        @SneakyThrows
+        void createTablesAndInsertDataTrue() {
+            int countOfSuccessInserts = userDao.createTablesAndInsertData();
             try (Connection connection = ConnectionManager.open();
                  Statement statement = connection.createStatement()) {
-                statement.execute(AFTER_CLEAN_TABLES_SQL);
                 statement.execute(AFTER_DROP_TABLES_SQL);
+            }
+            assertThat(countOfSuccessInserts).isEqualTo(2);
+        }
+
+        @Test
+        @SneakyThrows
+        void createTablesTrue() {
+            boolean result = userDao.createTables();
+            try (Connection connection = ConnectionManager.open();
+                 Statement statement = connection.createStatement()) {
+                statement.execute(AFTER_DROP_TABLES_SQL);
+            }
+            assertThat(result).isTrue();
+        }
+
+        @Test
+        @SneakyThrows
+        void insertInitDataTrue() {
+            userDao.createTables();
+            int countOfSuccessInserts = userDao.insertInitData();
+            try (Connection connection = ConnectionManager.open();
+                 Statement statement = connection.createStatement()) {
+                fullClearDatabase(statement);
+            }
+            assertThat(countOfSuccessInserts).isEqualTo(2);
+        }
+    }
+
+    @Nested
+    @Tag("dao_user_find")
+    class FindMethodsTest {
+        @Test
+        @SneakyThrows
+        void findAllIsEqualToExpected() {
+            userDao.createTablesAndInsertData();
+            List<User> maybeUsers = userDao.findAll();
+            try (Connection connection = ConnectionManager.open();
+                 Statement statement = connection.createStatement()) {
+                fullClearDatabase(statement);
+            }
+            assertThat(maybeUsers).hasSize(10);
+            assertThat(maybeUsers).isEqualTo(FAKE_USERS_TO_FIND);
+        }
+
+        @Test
+        @SneakyThrows
+        void findAllIsNotEqualToExpected() {
+            userDao.createTablesAndInsertData();
+            List<User> maybeUsers = userDao.findAll();
+            try (Connection connection = ConnectionManager.open();
+                 Statement statement = connection.createStatement()) {
+                fullClearDatabase(statement);
+            }
+            assertThat(maybeUsers).hasSize(10);
+            assertThat(maybeUsers).isNotEqualTo(FAKE_USERS_TO_FIND.get(5));
+        }
+
+        @SneakyThrows
+        @ParameterizedTest
+        @MethodSource("org.oddishwolf.api.dao.UserDaoTest#getArgumentsForFindByIdTestIsEqualToExpected")
+        void findByIdIsEqualToExpected(String id, User expectedUser, int ddlDb) {
+            if (ddlDb == 1) userDao.createTablesAndInsertData();
+            Optional<User> maybeUser = userDao.findById(id);
+            assertThat(maybeUser).isPresent();
+            maybeUser.ifPresent(user -> assertThat(user).isEqualTo(expectedUser));
+            if (ddlDb == 2) {
+                try (Connection connection = ConnectionManager.open();
+                     Statement statement = connection.createStatement()) {
+                    fullClearDatabase(statement);
+                }
+            }
+        }
+
+        @SneakyThrows
+        @ParameterizedTest
+        @MethodSource("org.oddishwolf.api.dao.UserDaoTest#getArgumentsForFindByIdTestIsNotEqualToExpected")
+        void findByIdIsNotEqualToExpected(String id, int createOrDestroyDb) {
+            if (createOrDestroyDb == 1) userDao.createTablesAndInsertData();
+            Optional<User> maybeUser = userDao.findById(id);
+            assertThat(maybeUser).isNotPresent();
+            if (createOrDestroyDb == 2) {
+                try (Connection connection = ConnectionManager.open();
+                     Statement statement = connection.createStatement()) {
+                    fullClearDatabase(statement);
+                }
+            }
+        }
+    }
+
+    @Nested
+    @Tag("dao_user_update")
+    class UpdateTest {
+        @SneakyThrows
+        @ParameterizedTest
+        @MethodSource("org.oddishwolf.api.dao.UserDaoTest#getArgumentsForUpdateIsEqualToExpected")
+        void updateTestIsCorrectNumberOfUpdates(User userToUpdate, int createOrDestroyDb) {
+            if (createOrDestroyDb == 1) userDao.createTablesAndInsertData();
+            boolean maybeUpdatedUser = userDao.update(userToUpdate);
+            assertThat(maybeUpdatedUser).isTrue();
+            if (createOrDestroyDb == 2) {
+                try (Connection connection = ConnectionManager.open();
+                     Statement statement = connection.createStatement()) {
+                    fullClearDatabase(statement);
+                }
+            }
+        }
+
+        @SneakyThrows
+        @Test
+        void updateTestReturnFalseIfUserDoesNotExist() {
+            userDao.createTablesAndInsertData();
+            boolean maybeUpdatedUser = userDao.update(FAKE_USERS_TO_UPDATE.get(6));
+            assertThat(maybeUpdatedUser).isFalse();
+            try (Connection connection = ConnectionManager.open();
+                 Statement statement = connection.createStatement()) {
+                fullClearDatabase(statement);
+            }
+        }
+
+        @SneakyThrows
+        @Test
+        void updateTestReturnFalseIfUserExistButFieldsToUpdateAreEmpty() {
+            userDao.createTablesAndInsertData();
+            boolean maybeUpdatedUser = userDao.update(FAKE_USERS_TO_UPDATE.get(6));
+            assertThat(maybeUpdatedUser).isFalse();
+            try (Connection connection = ConnectionManager.open();
+                 Statement statement = connection.createStatement()) {
+                fullClearDatabase(statement);
             }
         }
     }
 
     @SneakyThrows
-    @ParameterizedTest
-    @MethodSource("org.oddishwolf.api.dao.UserDaoTest#getArgumentsForFindByIdTestIsNotEqualToExpected")
-    void findByIdIsNotEqualToExpected(String id, int createOrDestroyDb) {
-        if (createOrDestroyDb == 1) userDao.createTablesAndInsertData();
-        Optional<User> maybeUser = userDao.findById(id);
-        assertThat(maybeUser).isNotPresent();
-        if (createOrDestroyDb == 2) {
-            try (Connection connection = ConnectionManager.open();
-                 Statement statement = connection.createStatement()) {
-                statement.execute(AFTER_CLEAN_TABLES_SQL);
-                statement.execute(AFTER_DROP_TABLES_SQL);
-            }
-        }
-    }
-
-    @SneakyThrows
-    @ParameterizedTest
-    @MethodSource("org.oddishwolf.api.dao.UserDaoTest#getArgumentsForUpdateIsEqualToExpected")
-    void updateTestIsCorrectNumberOfUpdates(User userToUpdate, int createOrDestroyDb) {
-        if (createOrDestroyDb == 1) userDao.createTablesAndInsertData();
-        boolean maybeUpdatedUser = userDao.update(userToUpdate);
-        assertThat(maybeUpdatedUser).isTrue();
-        if (createOrDestroyDb == 2) {
-            try (Connection connection = ConnectionManager.open();
-                 Statement statement = connection.createStatement()) {
-                statement.execute(AFTER_CLEAN_TABLES_SQL);
-                statement.execute(AFTER_DROP_TABLES_SQL);
-            }
-        }
-    }
-
-    @SneakyThrows
-    @Test
-    void updateTestReturnFalseIfUserDoesNotExist() {
-        userDao.createTablesAndInsertData();
-        boolean maybeUpdatedUser = userDao.update(FAKE_USERS_TO_UPDATE.get(6));
-        assertThat(maybeUpdatedUser).isFalse();
-        try (Connection connection = ConnectionManager.open();
-             Statement statement = connection.createStatement()) {
-            statement.execute(AFTER_CLEAN_TABLES_SQL);
-            statement.execute(AFTER_DROP_TABLES_SQL);
-        }
-    }
-
-    @SneakyThrows
-    @Test
-    void updateTestReturnFalseIfUserExistButFieldsToUpdateAreEmpty() {
-        userDao.createTablesAndInsertData();
-        boolean maybeUpdatedUser = userDao.update(FAKE_USERS_TO_UPDATE.get(6));
-        assertThat(maybeUpdatedUser).isFalse();
-        try (Connection connection = ConnectionManager.open();
-             Statement statement = connection.createStatement()) {
-            statement.execute(AFTER_CLEAN_TABLES_SQL);
-            statement.execute(AFTER_DROP_TABLES_SQL);
-        }
+    private void fullClearDatabase(Statement statement) {
+        statement.execute(AFTER_CLEAN_TABLES_SQL);
+        statement.execute(AFTER_DROP_TABLES_SQL);
     }
 
     static Stream<Arguments> getArgumentsForFindByIdTestIsEqualToExpected() {

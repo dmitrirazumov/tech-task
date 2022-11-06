@@ -102,7 +102,7 @@ public class UserDao implements Dao<String, User> {
         List<Object> parameters = new ArrayList<>();
         List<String> setSql = new ArrayList<>();
 
-        //build query
+        //build query (QueryDSL can be used)
         if (entity.getAdditionalParameter() != null) {
             setSql.add("username = ?");
             parameters.add(entity.getAdditionalParameter());

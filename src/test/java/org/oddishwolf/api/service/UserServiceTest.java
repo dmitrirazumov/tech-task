@@ -49,7 +49,7 @@ public class UserServiceTest {
     private UserService userService;
 
     @Nested
-    @Tag("get")
+    @Tag("service_user_get")
     class GetMethodsTest {
         @Test
         void getReturnTrue() {
@@ -80,7 +80,7 @@ public class UserServiceTest {
     }
 
     @Nested
-    @Tag("update")
+    @Tag("service_user_update")
     class UpdateTest {
         @Test
         void updateReturnTrue() {
@@ -104,7 +104,7 @@ public class UserServiceTest {
     }
 
     @Nested
-    @Tag("filters")
+    @Tag("service_user_filters")
     class FilterTest {
         @Test
         void filterByAge() {
@@ -125,6 +125,7 @@ public class UserServiceTest {
     }
 
     @Nested
+    @Tag("service_user_init_db")
     class InitData {
         @Test
         void initReturnTrue() {
