@@ -102,4 +102,4 @@ List<User> usersFilteredByLastNamePostfix = userService.filterByLastNamePostfix(
 6. ScriptsReaderTest - by-default помечен как @Disabled, потому что основной функционал использует ресурсы папки main. Тестировал изолировано от других тестов с переопределением пути к ресурсам на src/test/resources (поэтому Skipped).
 7. UpdateUserValidator - тестирование валидации приходящих извне данных, использует моки для UserService при необходимости поиска существующего пользователя в БД.
 
-(tests_result.jpg "test_results")
+![test_results](tests_result.jpg "test_results")
