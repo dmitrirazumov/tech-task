@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Disabled
 @Tag("fast")
-@Tag("connection_manager_test")
+@Tag("util_connectionManager")
 public class ConnectionManagerTest {
 
     @Test
