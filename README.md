@@ -24,3 +24,45 @@ can be extended to servlet layer. (Java, PostgreSQL, JDBC, H2, JUnit 5, Mockito,
 UserService userService = UserService.buildUserService();
 userService.init();
 ```
+
+## TASK 1
+
+**ПОИСК В РЕПОЗИТОРИИ АККАУНТА ПОЛЬЗОВАТЕЛЯ ПО ИМЕНИ**
+
+На уровне сервисов реализован метод: get(String username).
+
+```
+Optional<User> user1 = userService.get("username1");
+Optional<User> user2 = userService.get("username2");
+Optional<User> user3 = userService.get("username3");
+```
+
+## TASK 2
+
+**ИЗМЕНЕНИЕ У УЧЕТНОЙ ЗАПИСИ ЛЮБОГО АТРИБУТА**
+
+На уровне сервисов реализован метод: update(UpdateUserDto userDto)</br>
+Объект проходит:
+1. Валидацию: 
+    * проверки username на null и пробелы/табуляции; на существование пользователя в БД;
+    * на отсутствие остальных полей при введенем пользователе;
+    * на существование пользователя, на чье имя хотим изменить текущее;
+    * на правильный формат (dd-MM-yyyy) даты; на соответсвия коду гендера (1 - MALE, 2 - FEMALE);
+    * (если валидация не проходит, то выбрасывается соответсвующей исключение ValidationException).
+2. Маппинг: так как данные могут приходить с прикладного уровня, то, скорее всего, это будут строки. Для этого осуществляется маппинг на entity, с которой работает слой DAO;
+3. Вызов соответсвующего метода из слоя DAO.
+
+```
+userService.update(UpdateUserDto.builder()
+    .username("username1")
+    .firstName("someRandomName1")
+    .birthday("24-11-1998")
+    .gender("2")
+    .build());
+userService.update(UpdateUserDto.builder()
+    .username("username2")
+    .newUsername("newNameForUsername2")
+    .build());
+Optional<User> updatedUser1 = userService.get("username1");
+Optional<User> updatedUser2 = userService.get("username2");
+```
