@@ -42,7 +42,9 @@ Optional<User> user3 = userService.get("username3");
 **ИЗМЕНЕНИЕ У УЧЕТНОЙ ЗАПИСИ ЛЮБОГО АТРИБУТА**
 
 На уровне сервисов реализован метод: update(UpdateUserDto userDto)</br>
+
 Объект проходит:
+
 1. Валидацию: 
     * проверки username на null и пробелы/табуляции; на существование пользователя в БД;
     * на отсутствие остальных полей при введенем пользователе;
@@ -66,3 +68,38 @@ userService.update(UpdateUserDto.builder()
 Optional<User> updatedUser1 = userService.get("username1");
 Optional<User> updatedUser2 = userService.get("username2");
 ```
+
+## TASK 4
+
+**ПОЛУЧИТЬ СПИСОК ВСЕХ ПОЛЬЗОВАТЕЛЕЙ, А ЗАТЕМ С ПОМОЩЬЮ Stream API НАЙТИ:**
+    * имена всех пользователей, которые младше 20 лет;
+    * посчитать количество пользователей, у которых фамилия оканчивается на "ов".
+    
+На уровне сервисов реализованы методы:
+
+1. getAll() - получение всех пользователей;
+2. filterByAge() - получение пользоваталей моложе 20 лет;
+3. filterByLastNamePostfix() - получение пользователей, чьи фамилии заканчиваются на "ов".
+
+```
+List<User> users = userService.getAll();
+List<User> usersFilteredByAge = userService.filterByAge();
+List<User> usersFilteredByLastNamePostfix = userService.filterByLastNamePostfix();
+```
+
+## ТЕСТЫ
+
+Тестирование проходило как на postgres (как реальная БД), так и на H2 (как тестовая БД).</br>
+Перед тестированием используются DDL для создания и очистки БД после тестов.</br>
+Поэтому рекомендуется убедиться, что БД существует и пуста.
+
+Для тестирования были реализованы:
+1. UserDaoTest - by-default помечен как @Disabled, чтобы тестирование случайно не провелось на реальной БД. В application.properties надо переопределить подключение на H2 (embedded).
+2. UpdateUserMapperTest - тестирования маппинга UpdateUserDto в User entity, с которым работает UserDao.
+3. UserServiceTest - тестирование UserService, при обращении к DAO использует моки.
+4. ConnectionManagerTest - тестирует подключение к БД. Помечен как @Disabled на случай, если подключение не указано в application.properties.
+5. LocalDateFormatterTest - тестирует парсинг из текстового формата даты в LocalDate.
+6. ScriptsReaderTest - by-default помечен как @Disabled, потому что основной функционал использует ресурсы папки main. Тестировал изолировано от других тестов с переопределением пути к ресурсам на src/test/resources (поэтому Skipped).
+7. UpdateUserValidator - тестирование валидации приходящих извне данных, использует моки для UserService при необходимости поиска существующего пользователя в БД.
+
+(tests_result.jpg "test_results")
