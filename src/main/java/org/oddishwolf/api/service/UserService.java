@@ -90,4 +90,11 @@ public class UserService {
     public long getAge(User user) {
         return ChronoUnit.YEARS.between(user.getBirthday(), LocalDate.now());
     }
+
+    public static UserService buildUserService() {
+        return new UserService(new UserDao(),
+                new UpdateUserValidator(new UserService(new UserDao())),
+                new ValidationResult(),
+                new UpdateUserMapper());
+    }
 }
