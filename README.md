@@ -76,16 +76,19 @@ Optional<User> updatedUser2 = userService.get("username2");
     * имена всех пользователей, которые младше 20 лет;
     * посчитать количество пользователей, у которых фамилия оканчивается на "ов".
     
+(Если нужно было бы создать такие методы фильтрации, которые можно применять друг за другом, то работал бы с новым DTO классом (например, UserFilter),
+ по аналогии с логикой метода update(), где можно задать любую фильтрацию и строить в DAO запрос динамически)
+    
 На уровне сервисов реализованы методы:
 
 1. getAll() - получение всех пользователей;
-2. filterByAge() - получение пользоваталей моложе 20 лет;
-3. filterByLastNamePostfix() - получение пользователей, чьи фамилии заканчиваются на "ов".
+2. filterUsersByAge() - получение пользоваталей моложе 20 лет;
+3. countUsersByLastNamePostfix() - получение пользователей, чьи фамилии заканчиваются на "ов".
 
 ```
 List<User> users = userService.getAll();
 List<User> usersFilteredByAge = userService.filterByAge();
-List<User> usersFilteredByLastNamePostfix = userService.filterByLastNamePostfix();
+long countOfUsers = userService.countUsersByLastNamePostfix();
 ```
 
 ## ТЕСТЫ
