@@ -1,4 +1,4 @@
-TESH-TASK
+TECH-TASK
 ==============
 A simple Java application that uses JDBC to work with PostgreSQL. The MVC pattern is used, application 
 can be extended to servlet layer. (Java, PostgreSQL, JDBC, H2, JUnit 5, Mockito, Lombok)
@@ -49,7 +49,8 @@ Optional<User> user3 = userService.get("username3");
     * проверки username на null и пробелы/табуляции; на существование пользователя в БД;
     * на отсутствие остальных полей при введенем пользователе;
     * на существование пользователя, на чье имя хотим изменить текущее;
-    * на правильный формат (dd-MM-yyyy) даты; на соответсвия коду гендера (1 - MALE, 2 - FEMALE);
+    * на правильный формат (dd-MM-yyyy) даты; 
+    * на соответсвия коду гендера (1 - MALE, 2 - FEMALE);
     * (если валидация не проходит, то выбрасывается соответсвующей исключение ValidationException).
 2. Маппинг: так как данные могут приходить с прикладного уровня, то, скорее всего, это будут строки. Для этого осуществляется маппинг на entity, с которой работает слой DAO;
 3. Вызов соответсвующего метода из слоя DAO.
@@ -100,6 +101,9 @@ List<User> usersFilteredByLastNamePostfix = userService.filterByLastNamePostfix(
 4. ConnectionManagerTest - тестирует подключение к БД. Помечен как @Disabled на случай, если подключение не указано в application.properties.
 5. LocalDateFormatterTest - тестирует парсинг из текстового формата даты в LocalDate.
 6. ScriptsReaderTest - by-default помечен как @Disabled, потому что основной функционал использует ресурсы папки main. Тестировал изолировано от других тестов с переопределением пути к ресурсам на src/test/resources (поэтому Skipped).
-7. UpdateUserValidator - тестирование валидации приходящих извне данных, использует моки для UserService при необходимости поиска существующего пользователя в БД.
+7. UpdateUserValidator - тестирование валидации приходящих извне данных, использует моки для UserService при необходимости поиска существующего пользователя в БД.</br>
 
-![test_results](tests_result.jpg "test_results")
+
+<p align="center">
+   <img src="https://raw.githubusercontent.com/dmitrirazumov/tech-task/master/tests_result.jpg">
+</p>
