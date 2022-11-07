@@ -78,11 +78,11 @@ public class App {
         filterByLastNamePostfix() - получение пользователей, чьи фамилии заканчиваются на "ов".
         */
         List<User> users = userService.getAll();
-        List<User> usersFilteredByAge = userService.filterByAge();
-        List<User> usersFilteredByLastNamePostfix = userService.filterByLastNamePostfix();
+        List<User> usersFilteredByAge = userService.filterUsersByAge();
+        long countOfUsers = userService.countUsersByLastNamePostfix();
         System.out.println(users);
         System.out.println(usersFilteredByAge);
-        System.out.println(usersFilteredByLastNamePostfix);
+        System.out.println(countOfUsers);
 
         /*
         ПОДРОБНЕЕ ПРО ТЕСТЫ

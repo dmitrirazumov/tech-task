@@ -41,20 +41,20 @@ public class UserService {
         return userDao.findAll();
     }
 
-    //return users which younger than 20
-    public List<User> filterByAge() {
+    //return users whose younger than 20
+    public List<User> filterUsersByAge() {
         List<User> users = userDao.findAll();
         return users.stream().
                 filter(user -> getAge(user) < 20)
                 .collect(toList());
     }
 
-    //return users whose last name ends with "ов"
-    public List<User> filterByLastNamePostfix() {
+    //return count of users whose last name ends with "ов"
+    public long countUsersByLastNamePostfix() {
         List<User> users = userDao.findAll();
         return users.stream()
                 .filter(user -> user.getLastName().endsWith("ов"))
-                .collect(toList());
+                .count();
     }
 
     //updating any field of user

@@ -109,18 +109,16 @@ public class UserServiceTest {
         @Test
         void filterByAge() {
             doReturn(List.of(FAKE_USER1, FAKE_USER2)).when(userDao).findAll();
-            List<User> maybeUsers = userService.filterByAge();
+            List<User> maybeUsers = userService.filterUsersByAge();
             assertThat(maybeUsers).hasSize(1);
             assertThat(maybeUsers).contains(FAKE_USER1);
             assertThat(maybeUsers).doesNotContain(FAKE_USER2);
         }
         @Test
         void filterByLastNamePostfix() {
-            doReturn(List.of(FAKE_USER1, FAKE_USER2)).when(userDao).findAll();
-            List<User> maybeUsers = userService.filterByLastNamePostfix();
-            assertThat(maybeUsers).hasSize(1);
-            assertThat(maybeUsers).contains(FAKE_USER1);
-            assertThat(maybeUsers).doesNotContain(FAKE_USER2);
+            doReturn(List.of(FAKE_USER1)).when(userDao).findAll();
+            long countOfUsers = userService.countUsersByLastNamePostfix();
+            assertThat(countOfUsers).isEqualTo(1);
         }
     }
 
