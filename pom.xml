@@ -80,7 +80,7 @@
     </dependencies>
 
     <build>
-        <pluginManagement>
+<!--        <pluginManagement>-->
             <plugins>
                 <plugin>
                     <artifactId>maven-clean-plugin</artifactId>
@@ -105,6 +105,35 @@
                 <plugin>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>3.2.0</version>
+                    <configuration>
+                        <archive>
+                            <manifest>
+                                <mainClass>org.oddishwolf.api.App</mainClass>
+                            </manifest>
+                        </archive>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>3.3.0</version>
+                    <executions>
+                        <execution>
+                            <id>single-jar</id>
+                            <goals>
+                                <goal>single</goal>
+                            </goals>
+                            <phase>package</phase>
+                            <configuration>
+                                <descriptorRefs>jar-with-dependencies</descriptorRefs>
+                                <archive>
+                                    <manifest>
+                                        <mainClass>org.oddishwolf.api.App</mainClass>
+                                    </manifest>
+                                </archive>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <artifactId>maven-install-plugin</artifactId>
@@ -123,6 +152,6 @@
                     <version>3.4.1</version>
                 </plugin>
             </plugins>
-        </pluginManagement>
+<!--        </pluginManagement>-->
     </build>
 </project>

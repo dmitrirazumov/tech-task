@@ -17,10 +17,6 @@ public class App {
         В application.properties можно указать как H2 (jdbc:h2:~/test), так и postgres БД.
         Таким образом, была предпринята попытка эмуляции работы с реальным приложением, когда тесты со слоем DAO могут быть чреваты последствиями.
         Все тесты выполняются, скриншот приложен на гитхабе.
-
-        [INFO] Results:
-        [INFO]
-        [WARNING] Tests run: 101, Failures: 0, Errors: 0, Skipped: 1
         */
 
         /*
@@ -87,5 +83,26 @@ public class App {
         System.out.println(users);
         System.out.println(usersFilteredByAge);
         System.out.println(usersFilteredByLastNamePostfix);
+
+        /*
+        ПОДРОБНЕЕ ПРО ТЕСТЫ
+
+        Тестирование проходило как на postgres (как реальная БД), так и на H2 (как тестовая БД). Перед тестированием используются DDL для создания и очистки БД после тестов.
+        Поэтому рекомендуется убедиться, что БД существует и пуста.
+
+        Для тестирования были реализованы:
+        1. UserDaoTest - by-default помечен как @Disabled, чтобы тестирование случайно не провелось на реальной БД. В application.properties надо переопределить подключение на H2 (embedded).
+        2. UpdateUserMapperTest - тестирования маппинга UpdateUserDto в User entity, с которым работает UserDao.
+        3. UserServiceTest - тестирование UserService, при обращении к DAO использует моки.
+        4. ConnectionManagerTest - тестирует подключение к БД. Помечен как @Disabled на случай, если подключение не указано в application.properties.
+        5. LocalDateFormatterTest - тестирует парсинг из текстового формата даты в LocalDate.
+        6. ScriptsReaderTest - by-default помечен как @Disabled, потому что основной функционал использует ресурсы папки main. Тестировал изолировано от других тестов с переопределением
+                               пути к ресурсам на src/test/resources (поэтому Skipped).
+        7. UpdateUserValidator - тестирование валидации приходящих извне данных, использует моки для UserService при необходимости поиска существующего пользователя в БД.
+
+        [INFO] Results:
+        [INFO]
+        [WARNING] Tests run: 101, Failures: 0, Errors: 0, Skipped: 1
+        */
     }
 }

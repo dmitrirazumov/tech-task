@@ -5,6 +5,7 @@ import lombok.experimental.UtilityClass;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
 One thread connection.
@@ -38,6 +39,7 @@ public class ConnectionManager {
     private static void loadDriver() {
         try {
             Class.forName("org.postgresql.Driver");
+            Class.forName("org.h2.Driver");
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }

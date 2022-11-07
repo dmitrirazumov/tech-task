@@ -1,6 +1,5 @@
 package org.oddishwolf.api.validator;
 
-import org.oddishwolf.api.dao.UserDao;
 import org.oddishwolf.api.dto.UpdateUserDto;
 import org.oddishwolf.api.service.UserService;
 import org.oddishwolf.api.util.LocalDateFormatter;
@@ -10,7 +9,6 @@ import java.util.Set;
 public class UpdateUserValidator implements Validator<UpdateUserDto> {
 
     private final UserService userService;
-//            = new UserService(new UserDao());
 
     private static final Set<String> GENDERS_CODE = Set.of("1", "2");
 
