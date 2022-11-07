@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Make sure that your properties changed for src/test/resources.
- * After you can comment @Disabled.
+ * After you can comment @Disabled and test this isolated (!)
  */
 
 @Disabled
